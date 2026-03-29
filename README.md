@@ -1,104 +1,62 @@
-# Expert Advisor Integration for MetaTrader Strategies
+# Real-Time Social Sentiment Trading Signals
 
-Integration layer for importing and executing MetaTrader 4/5 Expert Advisors within the AutoSena trading platform. Provides unified execution monitoring and performance reporting across MT and native strategies.
+## Overview
+Aggregate sentiment from Twitter/X, Reddit, and financial news into actionable trading signals. Visual sentiment dashboard, automated alerts for sentiment shifts, and integration with trade execution.
 
 ## Architecture
 
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   MetaTrader    │────▶│   EA Connector  │────▶│   Backend API   │
-│   4/5 Terminal  │     │   (MQL5)        │     │   (Express)     │
-└─────────────────┘     └─────────────────┘     └────────┬────────┘
-                                                        │
-                        ┌─────────────────┐              │
-                        │   Frontend      │◀─────────────┘
-                        │   Dashboard     │
-                        └─────────────────┘
-```
+### Backend (Node.js + Express + SQLite)
+- **Sentiment Analysis Engine**: NLP-based financial sentiment analysis
+- **Signal Generation Service**: Generate BUY/SELL signals from sentiment
+- **Alert Service**: Threshold-based alerts for sentiment changes
+- **Data Ingestion Service**: Pipeline for Twitter, Reddit, news data
 
-## Components
+### Frontend (React + Tailwind)
+- **Sentiment Dashboard**: Real-time sentiment visualization with gauges
+- **Signals Feed**: Trading signals with confidence scores
+- **Alerts Management**: Create, view, acknowledge alerts
 
-### 1. MQL5 EA Connector (`/mql5`)
-- WebRequest-based communication with backend API
-- Trade signal generation and reporting
-- Performance metrics telemetry
-- Supports MT4/MT5 terminals
+## Key Features
 
-### 2. Backend API (`/backend`)
-- REST API for EA registration and management
-- Performance data ingestion endpoints
-- Signal normalization layer
-- Historical performance storage
+### Sentiment Analysis
+- Financial lexicon-based sentiment scoring
+- Engagement-weighted sentiment calculation
+- Source breakdown (Twitter, Reddit, News)
+- Market-wide sentiment aggregation
 
-### 3. Frontend Dashboard (`/frontend`)
-- Real-time EA performance monitoring
-- Multi-EA portfolio view
-- Performance metrics and charts
-- Signal execution history
+### Signal Generation
+- BUY/SELL signals from sentiment thresholds
+- Sentiment shift detection
+- Composite signals from multiple sources
+- Confidence scoring based on volume
+
+### Alerting System
+- Threshold alerts (above/below sentiment values)
+- Sentiment shift alerts
+- Real-time notifications
+- Alert acknowledgment workflow
 
 ## API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/ea/register` | Register new EA instance |
-| POST | `/api/ea/:id/heartbeat` | EA heartbeat/keepalive |
-| POST | `/api/ea/:id/signals` | Submit trade signals |
-| POST | `/api/ea/:id/performance` | Submit performance metrics |
-| GET | `/api/ea` | List all registered EAs |
-| GET | `/api/ea/:id` | Get EA details |
-| GET | `/api/ea/:id/performance` | Get EA performance history |
-| GET | `/api/ea/:id/signals` | Get EA signal history |
+### Sentiment
+- `GET /api/sentiment/:symbol` - Get aggregated sentiment
+- `GET /api/sentiment/:symbol/shift` - Detect sentiment shift
+- `GET /api/sentiment/market/overview` - Market-wide sentiment
+- `POST /api/sentiment/analyze` - Analyze text directly
 
-## Configuration
+### Signals
+- `GET /api/signals` - Get active signals
+- `GET /api/signals/history` - Signals history
+- `POST /api/signals/generate` - Generate new signal
+- `POST /api/signals/scan` - Scan for new signals
 
-### Backend Environment
-```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/autosena
-MT_CONNECTOR_SECRET=your-secret-key
-```
+### Alerts
+- `GET /api/alerts` - Get user alerts
+- `POST /api/alerts` - Create alert
+- `POST /api/alerts/check` - Check alerts
+- `POST /api/alerts/:id/acknowledge` - Acknowledge alert
 
-### EA Configuration (mql5/Config.mqh)
-```mql5
-#property connector_url "http://your-server:3000/api"
-#property connector_secret "your-secret-key"
-#property ea_id "unique-ea-instance-id"
-```
-
-## Installation
-
-### Backend
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### MetaTrader EA
-1. Copy files from `/mql5` to your MT5 `MQL5/Experts/` folder
-2. Compile in MetaEditor
-3. Attach to chart with proper configuration
-
-## Security
-
-- All API requests require `X-Connector-Secret` header
-- EA instances must be registered before sending data
-- Rate limiting: 100 requests/minute per EA
-- WebRequest requires explicit URL allowance in MT terminal
-
-## References
-
-- [MetaTrader 5 WebRequest](https://www.mql5.com/en/docs/webrequest)
-- [MQL5 REST Client](https://www.mql5.com/en/docs/network/restclient)
-- [MT5 Trading Signals](https://www.mql5.com/en/docs/trading/signals)
-
----
-
-Task: 12e9415f-8820-4704-984b-384c0d0487b2
+## Research Backing
+- Real-time sentiment analysis from social media identified as emerging tech
+- Retail trader power demonstrated by social media-driven market movements
+- Automation reduces friction in manual analysis workflows
